@@ -20,6 +20,8 @@
       <input type="text" id="condition" placeholder="Condition">
       <button type="submit">Add Patient</button>
     </form>
+    <h2>Patient List</h2>
+    <ul id="patientList"></ul>
 
     <table>
       <thead>
@@ -35,5 +37,24 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    const form = document.querySelector("form");
+    const patientList = document.getElementById("patientList");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = form.querySelectorAll("input")[0].value;
+        const age = form.querySelectorAll("input")[1].value;
+        const diagnosis = form.querySelectorAll("input")[2].value;
+
+        const li = document.createElement("li");
+        li.textContent = "Name: " + name + " | Age: " + age + " | Diagnosis: " + diagnosis;
+
+        patientList.appendChild(li);
+
+        form.reset();
+    });
+</script>
 </body>
 </html>
