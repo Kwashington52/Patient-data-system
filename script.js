@@ -1,29 +1,62 @@
-// SAVE data when you click submit
 document.getElementById("patientForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     let name = document.getElementById("name").value;
-    let id = document.getElementById("id").value;
+    let age = document.getElementById("age").value;
+    let condition = document.getElementById("condition").value;
 
     let patient = {
         name: name,
-        id: id
+        age: age,
+        condition: condition
     };
 
-    localStorage.setItem("patientData", JSON.stringify(patient));
+    let patients = JSON.parse(localStorage.getItem("patients")) || [];
 
-    alert("Saved!");
+    patients.push(patient);
+
+    localStorage.setItem("patients", JSON.stringify(patients));
+
+    document.getElementById("patientForm").reset();
+
+    displayPatients();
 });
 
 
-// LOAD data when page opens
+function displayPatients() {
+    let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+    let table = document.getElementById("patientTable");
+
+    table.innerHTML = "";
+
+    patients.forEach(function(patient) {
+        let row = `
+            <tr>
+                <td>${patient.name}</td>
+                <td>${patient.age}</td>
+                <td>${patient.condition}</td>
+                <td><button onclick="deletePatient('${patient.name}')">Delete</button></td>
+            </tr>
+        `;
+
+        table.innerHTML += row;
+    });
+}
+
+
+function deletePatient(name) {
+    let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+    patients = patients.filter(p => p.name !== name);
+
+    localStorage.setItem("patients", JSON.stringify(patients));
+
+    displayPatients();
+}
+
+
+// load when page opens
 window.onload = function() {
-    let saved = localStorage.getItem("patientData");
-
-    if (saved) {
-        let patient = JSON.parse(saved);
-
-        document.getElementById("name").value = patient.name;
-        document.getElementById("id").value = patient.id;
-    }
+    displayPatients();
 };
