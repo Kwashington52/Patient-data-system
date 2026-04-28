@@ -1,62 +1,53 @@
-document.getElementById("patientForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
 
-    let name = document.getElementById("name").value;
-    let age = document.getElementById("age").value;
-    let condition = document.getElementById("condition").value;
+    const form = document.getElementById("patientForm");
+    const table = document.getElementById("patientTable");
 
-    let patient = {
-        name: name,
-        age: age,
-        condition: condition
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let name = document.getElementById("name").value;
+        let age = document.getElementById("age").value;
+        let condition = document.getElementById("condition").value;
+
+        let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+        patients.push({ name, age, condition });
+
+        localStorage.setItem("patients", JSON.stringify(patients));
+
+        form.reset();
+
+        renderTable();
+    });
+
+    function renderTable() {
+        let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+        table.innerHTML = "";
+
+        patients.forEach((p, index) => {
+            table.innerHTML += `
+                <tr>
+                    <td>${p.name}</td>
+                    <td>${p.age}</td>
+                    <td>${p.condition}</td>
+                    <td><button onclick="deletePatient(${index})">Delete</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    window.deletePatient = function (index) {
+        let patients = JSON.parse(localStorage.getItem("patients")) || [];
+
+        patients.splice(index, 1);
+
+        localStorage.setItem("patients", JSON.stringify(patients));
+
+        renderTable();
     };
 
-    let patients = JSON.parse(localStorage.getItem("patients")) || [];
+    renderTable();
 
-    patients.push(patient);
-
-    localStorage.setItem("patients", JSON.stringify(patients));
-
-    document.getElementById("patientForm").reset();
-
-    displayPatients();
 });
-
-
-function displayPatients() {
-    let patients = JSON.parse(localStorage.getItem("patients")) || [];
-
-    let table = document.getElementById("patientTable");
-
-    table.innerHTML = "";
-
-    patients.forEach(function(patient) {
-        let row = `
-            <tr>
-                <td>${patient.name}</td>
-                <td>${patient.age}</td>
-                <td>${patient.condition}</td>
-                <td><button onclick="deletePatient('${patient.name}')">Delete</button></td>
-            </tr>
-        `;
-
-        table.innerHTML += row;
-    });
-}
-
-
-function deletePatient(name) {
-    let patients = JSON.parse(localStorage.getItem("patients")) || [];
-
-    patients = patients.filter(p => p.name !== name);
-
-    localStorage.setItem("patients", JSON.stringify(patients));
-
-    displayPatients();
-}
-
-
-// load when page opens
-window.onload = function() {
-    displayPatients();
-};
