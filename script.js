@@ -1,25 +1,29 @@
-const form = document.querySelector("form");
-const patientTable = document.getElementById("patientTable");
+// SAVE data when you click submit
+document.getElementById("patientForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
+    let name = document.getElementById("name").value;
+    let id = document.getElementById("id").value;
 
-  const inputs = form.querySelectorAll("input");
+    let patient = {
+        name: name,
+        id: id
+    };
 
-  const name = inputs[0].value;
-  const age = inputs[1].value;
-  const condition = inputs[2].value;
+    localStorage.setItem("patientData", JSON.stringify(patient));
 
-  const row = document.createElement("tr");
-
-  row.innerHTML = `
-    <td>${name}</td>
-    <td>${age}</td>
-    <td>${condition}</td>
-    <td><button onclick="this.parentElement.parentElement.remove()">Delete</button></td>
-  `;
-
-  patientTable.appendChild(row);
-
-  form.reset();
+    alert("Saved!");
 });
+
+
+// LOAD data when page opens
+window.onload = function() {
+    let saved = localStorage.getItem("patientData");
+
+    if (saved) {
+        let patient = JSON.parse(saved);
+
+        document.getElementById("name").value = patient.name;
+        document.getElementById("id").value = patient.id;
+    }
+};
